@@ -3,7 +3,7 @@
 // Require API
 // ======================
 
-require 'mojang-api.php';
+require 'mojang-api.class.php';
 
 
 // Fetch stuff

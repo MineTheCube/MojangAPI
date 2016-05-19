@@ -3,7 +3,7 @@
 
 ## Methods
 
-To see all methods available, open the file `mojang-api.php`.
+To see all methods available, open the file `mojang-api.class.php`.
 
 ## Usage
 
