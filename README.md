@@ -1,5 +1,5 @@
 # MojangAPI
-##### PHP class to use official Mojang API
+##### A easy-to-use PHP class for accessing official Mojang's API
 
 ## Installation
 
