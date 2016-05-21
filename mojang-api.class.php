@@ -310,6 +310,8 @@ class MojangAPI {
     /**
      * Print image from raw png
      *
+     * Nothing should be displayed on the page other than this image
+     *
      * @param  string      $img
      * @param  int         $cache in seconds, 0 to disable
      */

@@ -3,7 +3,7 @@
 /**
  * Fast and easy way to access Mojang API
  * 
- * Can be used to get Mojang status, UUID and username conversions, names history, and fetch skin.
+ * This interface is NOT needed in your project
  * 
  * @see http://wiki.vg/Mojang_API
  */
@@ -184,6 +184,8 @@ interface MojangAPI {
 
     /**
      * Print image from raw png
+     *
+     * Nothing should be displayed on the page other than this image
      *
      * @param  string      $img
      * @param  int         $cache in seconds, 0 to disable
