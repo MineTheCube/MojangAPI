@@ -200,4 +200,15 @@ interface MojangAPI {
      */
     public static function embedImage($img);
 
+    /**
+     * Authenticate with a Minecraft account
+     * 
+     * After a few fails, Mojang server will deny all requests !
+     *
+     * @param  string $id       Minecraft username or Mojang email
+     * @param  string $password Account's password
+     * @return array|bool       Array with id and name, false if authentication failed
+     */
+    public static function authenticate($id, $password);
+
 }

@@ -334,6 +334,52 @@ class MojangAPI {
     }
 
     /**
+     * Authenticate with a Minecraft account
+     * 
+     * After a few fails, Mojang server will deny all requests !
+     *
+     * @param  string $id       Minecraft username or Mojang email
+     * @param  string $password Account's password
+     * @return array|bool       Array with id and name, false if authentication failed
+     */
+    public static function authenticate($id, $password) {
+        if (!function_exists('curl_init') or !extension_loaded('curl')) {
+            return false;
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://authserver.mojang.com/authenticate');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array(
+            'agent' => array(
+                'name' => 'Minecraft',
+                'version' => 1,
+            ),
+            'username' => $id,
+            'password' => $password
+        )));
+
+        $output = curl_exec($ch);
+        curl_close($ch);
+        $json = self::parseJson($output);
+
+        if (is_array($json) and array_key_exists('selectedProfile', $json) and is_array($json['selectedProfile'])
+                and array_key_exists('id', $json['selectedProfile']) and array_key_exists('name', $json['selectedProfile'])) {
+
+            return array(
+                'id' => $json['selectedProfile']['id'],
+                'name' => $json['selectedProfile']['name']
+            );
+
+        }
+        return false;
+    }
+
+    /**
      * Parse JSON
      *
      * @param  string      $json

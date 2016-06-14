@@ -60,3 +60,15 @@ if (empty($head)) {
 // And print it directly with <img> tag
 $img = '<img src="' . MojangAPI::embedImage($head) . '">';
 echo $img;
+
+
+/* Authentication
+---------------------------*/
+
+$result = MojangAPI::authenticate('username@gmail.com', '123456');
+
+if ($result) {
+    echo 'Welcome ' . $result['name'] . ', your UUID is: ' . $result['id'];
+} else {
+    echo 'Sorry, authentication failed.. :(';
+}
