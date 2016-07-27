@@ -38,6 +38,30 @@ $valid = MojangAPI::isValidUuid('069a79f444e94726a5befca90e38aaf5');
 var_dump($valid); // true
 
 
+/* Query / Ping
+---------------------------*/
+
+$query = MojangAPI::query('play.onecraft.fr', 25565);
+if ($query) {
+    echo 'There is ' . $query['players'] . ' players online out of ' . $query['maxplayers'];
+} else {
+    echo 'Server is offline.';
+}
+// Uncomment the line below to see what's returned
+// var_dump($query);
+
+$ping = MojangAPI::ping('play.onecraft.fr', 25565);
+if ($ping) {
+    echo 'There is ' . $ping['players']['online'] . ' players online out of ' . $ping['players']['max'];
+    $img = '<img src="' . MojangAPI::embedImage($ping['favicon']) . '" alt="Favicon of server">';
+    echo $img;
+} else {
+    echo 'Server is offline.';
+}
+// Uncomment the line below to see what's returned
+// var_dump($ping);
+
+
 /* Textures / Skins
 ---------------------------*/
 
@@ -58,7 +82,7 @@ if (empty($head)) {
 }
 
 // And print it directly with <img> tag
-$img = '<img src="' . MojangAPI::embedImage($head) . '">';
+$img = '<img src="' . MojangAPI::embedImage($head) . '" alt="Skin head">';
 echo $img;
 
 

@@ -330,7 +330,7 @@ class MojangAPI {
      * @return string embed image
      */
     public static function embedImage($img) {
-        return 'data:image/png;base64,' . base64_encode($img);
+        return substr($img, 0, strlen('data:image')) === 'data:image' ? $img : 'data:image/png;base64,' . base64_encode($img);
     }
 
     /**
@@ -379,6 +379,180 @@ class MojangAPI {
         return false;
     }
 
+    /**
+     * Query a Minecraft server
+     *
+     * @see https://github.com/xPaw/PHP-Minecraft-Query/
+     *
+     * @param  string $address Server's address
+     * @param  int    $port    Server's port, default is 25565
+     * @param  int    $timeout Timeout (in seconds), default is 2
+     * @return array|bool      Array with query result, false if query failed
+     */    
+    public static function query($address, $port = 25565, $timeout = 2) {
+
+        // Check arguments and if functions exists
+        if (!is_numeric($timeout) or $timeout < 0 or !function_exists('fsockopen')) return false;
+        
+        // Try to connect
+        $start = microtime(true);
+        $socket = @fsockopen('udp://' . $address, (int) $port, $errNo, $errStr, $timeout);
+        if ($errNo or $socket === false) return false;
+        
+        // Set read/write timeout
+        stream_set_timeout($socket, $timeout);
+        stream_set_blocking($socket, true);
+        
+        // Send handshake
+        $data = self::queryWriteData($socket, 0x09);
+        if ($data === false) return false;
+        
+        // And query
+        $challenge = pack('N', $data);
+        $data = self::queryWriteData($socket, 0x00, $challenge . pack('c*', 0x00, 0x00, 0x00, 0x00));
+        
+        if (!$data) return false;
+        
+        $last = '';
+        $info = array();
+        
+        // Extract data
+        $data = substr($data, 11);
+        $data = explode("\x00\x00\x01player_\x00\x00", $data);
+        if (count($data) !== 2) return false;
+        $players = substr($data[1], 0, -2);
+        $data = explode("\x00", $data[0]);
+        
+        // Array with known keys in order to validate the result
+        $keys = array(
+            'hostname'   => 'motd',
+            'gametype'   => 'gametype',
+            'version'    => 'version',
+            'plugins'    => 'plugins',
+            'map'        => 'map',
+            'numplayers' => 'players',
+            'maxplayers' => 'maxplayers',
+            'hostport'   => 'hostport',
+            'hostip'     => 'hostip',
+            'game_id'    => 'gamename'
+        );
+        
+        $mb_convert_encoding = function_exists('mb_convert_encoding');
+        foreach ($data as $key => $value) {
+            if (~$key & 1) {
+                if (!array_key_exists($value, $keys)) {
+                    $last = false;
+                    continue;
+                }
+                
+                $last = $keys[$value];
+                $info[$last] = '';
+            } else if ($last !== false) {
+                if (strlen($value)) {
+                    $info[$last] = $mb_convert_encoding ? mb_convert_encoding($value, 'UTF-8') : $value;
+                } else {
+                    $info[$last] = null;
+                }
+            }
+        }
+
+        // Ints
+        $info['players']    = intval($info['players']);
+        $info['maxplayers'] = intval($info['maxplayers']);
+        $info['hostport']   = intval($info['hostport']);
+        
+        // Parse "plugins" if any
+        if ($info['plugins']) {
+            $data = explode(": ", $info['plugins'], 2);
+            $info['rawplugins'] = $info['plugins'];
+            $info['software']   = $data[0];
+            if (count($data) == 2) {
+                $info['plugins'] = explode("; ", $data[1]);
+            }
+        }
+        
+        if (empty($players)) {
+            $info['playerlist'] = null;
+        } else {
+            $info['playerlist'] = explode("\x00", $players);
+        }
+
+        $info['timeout'] = microtime(true) - $start;
+
+        fclose($socket);
+        return $info;
+    }
+
+    /**
+     * Ping a Minecraft server
+     *
+     * @see https://github.com/xPaw/PHP-Minecraft-Query/
+     *
+     * @param  string $address Server's address
+     * @param  int    $port    Server's port, default is 25565
+     * @param  int    $timeout Timeout (in seconds), default is 2
+     * @return array|bool      Array with query result, false if query failed
+     */    
+    public static function ping($address, $port = 25565, $timeout = 2) {
+
+        // Check arguments and if functions exists
+        if (!is_numeric($timeout) or $timeout < 0 or !function_exists('fsockopen')) return false;
+        
+        // Try to connect
+        $start = microtime(true);
+        $socket = @fsockopen($address, (int) $port, $errNo, $errStr, $timeout);
+        if ($errNo or $socket === false) return false;
+        
+        // Set read/write timeout
+        stream_set_timeout($socket, $timeout);
+            
+        // See http://wiki.vg/Protocol (Status Ping)
+        $data = "\x00";
+        $data .= "\x04";
+        $data .= pack('c', strlen($address)) . $address;
+        $data .= pack('n', $port);
+        $data .= "\x01";
+        $data = pack('c', strlen($data)) . $data;
+        
+        // Send handshake and ping
+        fwrite($socket, $data);
+        fwrite($socket, "\x01\x00");
+
+        // Read response
+        $packetLength = self::pingReadVarInt($socket);
+        if ($packetLength === false or $packetLength < 10) return false;
+        
+        fgetc($socket);
+        $length = self::pingReadVarInt($socket);
+        if ($length === false) return false;
+        
+        $data = "";
+        do {
+            if (microtime(true) - $start > $timeout) return false;
+            $remainder = $length - strlen($data);
+            $block = fread($socket, $remainder);
+            if (!$block) return false;
+            $data .= $block;
+        } while (strlen($data) < $length);
+        
+        $data = self::parseJson($data);
+        if (empty($data) or json_last_error() !== JSON_ERROR_NONE or !array_key_exists('players', $data) or !is_array($data['players']) 
+            or !array_key_exists('online', $data['players'])) return false;
+
+        if (array_key_exists('description', $data) and is_array($data['description']) 
+            and array_key_exists('extra', $data['description']) and empty($data['description']['text'])) {
+
+            $motd = '';
+            foreach ($data['description']['extra'] as $key => $value) {
+                $motd .= $value['text'];
+            }
+            $data['description']['text'] = $motd;
+        }
+
+        $data['timeout'] = microtime(true) - $start;
+        return $data;
+    }
+    
     /**
      * Parse JSON
      *
@@ -436,6 +610,50 @@ class MojangAPI {
         }
 
         return false;
+    }
+
+    /**
+     * Write data in a socket for query
+     *
+     * @param  socket       $socket
+     * @param  string       $command
+     * @param  string       $append, default is ''
+     * @return string|false data, false on failure
+     */
+    private static function queryWriteData($socket, $command, $append = "") {
+        $command = pack('c*', 0xFE, 0xFD, $command, 0x01, 0x02, 0x03, 0x04) . $append;
+        $length  = strlen($command);
+
+        if ($length !== fwrite($socket, $command, $length)) return false;
+        
+        $data = fread($socket, 4096);        
+        if ($data === false or strlen($data) < 5 or $data[0] != $command[2]) return false;
+
+        return substr($data, 5);
+    }
+
+    /**
+     * Read var int in a socket for ping
+     *
+     * @param  socket    $socket
+     * @return int|false var int, false on failure
+     */
+    private static function pingReadVarInt($socket) {
+        $i = 0;
+        $j = 0;
+        
+        while (true) {
+            $k = @fgetc($socket);
+            if ($k === false) return false;
+            
+            $k = ord($k);
+            $i |= ($k & 0x7F) << $j++ * 7;
+            if ($j > 5) return false;
+            
+            if (($k & 0x80) != 128) break;
+        }
+        
+        return $i;
     }
 
 }

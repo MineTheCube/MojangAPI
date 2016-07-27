@@ -26,9 +26,14 @@ echo 'First username: <b>' . reset($history)['name'] . '</b><br>';
 
 // Print player's head
 $img = '<img src="' . MojangAPI::embedImage(MojangAPI::getPlayerHead($uuid)) . '" alt="Head of MTC">';
-echo 'Skin:<br>' . $img;
+echo 'Skin:<br>' . $img . '<br>';
+
+// Query a server
+$query = MojangAPI::query('play.onecraft.fr', 25565);
+if ($query) echo 'There is ' . $query['players'] . ' players online out of ' . $query['maxplayers'] . '<br>';
+else echo 'Server is offline.<br>';
 ```
 
 ## Result
 
-![Preview](http://i.imgur.com/0HV8thN.jpg)
+![Preview](http://i.imgur.com/LeCrUoe.png)

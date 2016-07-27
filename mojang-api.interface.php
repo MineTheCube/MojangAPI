@@ -211,4 +211,28 @@ interface MojangAPI {
      */
     public static function authenticate($id, $password);
 
+    /**
+     * Query a Minecraft server
+     *
+     * @see https://github.com/xPaw/PHP-Minecraft-Query/
+     *
+     * @param  string $address Server's address
+     * @param  int    $port    Server's port, default is 25565
+     * @param  int    $timeout Timeout (in seconds), default is 2
+     * @return array|bool      Array with query result, false if query failed
+     */    
+    public static function query($address, $port = 25565, $timeout = 2);
+
+    /**
+     * Ping a Minecraft server
+     *
+     * @see https://github.com/xPaw/PHP-Minecraft-Query/
+     *
+     * @param  string $address Server's address
+     * @param  int    $port    Server's port, default is 25565
+     * @param  int    $timeout Timeout (in seconds), default is 2
+     * @return array|bool      Array with query result, false if query failed
+     */    
+    public static function ping($address, $port = 25565, $timeout = 2);
+
 }
