@@ -3,8 +3,9 @@
 /* Require API
 ---------------------------*/
 
-require 'mojang-api.class.php';
+require '../src/MojangApi/mojang-api.class.php';
 
+use MojangApi\MojangAPI;
 
 /* Mojang Status
 ---------------------------*/
