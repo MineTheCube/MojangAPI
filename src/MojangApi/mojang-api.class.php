@@ -9,6 +9,9 @@
  * 
  * @see http://wiki.vg/Mojang_API
  */
+
+namespace MojangApi;
+
 class MojangAPI {
 
     /**

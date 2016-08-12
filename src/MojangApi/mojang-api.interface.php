@@ -7,7 +7,10 @@
  * 
  * @see http://wiki.vg/Mojang_API
  */
-interface MojangAPI {
+
+namespace MojangApi;
+
+interface MojangAPIInterface {
 
     /**
      * Get Mojang status

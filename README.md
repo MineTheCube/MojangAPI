@@ -3,18 +3,37 @@
 
 ## Installation
 
-You only need to download this file: [mojang-api.class.php](https://github.com/MineTheCube/MojangAPI/blob/master/mojang-api.class.php)
+##### Add in composer.json
+
+add in repositories list
+
+```json
+
+"repositories": [
+    {
+        "type": "git",
+        "url": "git@github.com:qneyrat/MojangAPI.git"
+    }
+],
+```
+
+add in require list
+
+```json
+
+"require": {
+    "mtc/mojang-api": "dev-master"
+},
+```
 
 ## Usage
 
-See an usage of this class in [`example.php`](https://github.com/MineTheCube/MojangAPI/blob/master/example.php) file.
-To see all methods available, see the MojangAPI interface: [`mojang-api.interface.php`](https://github.com/MineTheCube/MojangAPI/blob/master/mojang-api.interface.php) (not needed in your project).
+use MojangApi\MojangAPI;
 
 ## Example
 
 ```php
-// Require API
-require 'mojang-api.class.php';
+use MojangApi\MojangAPI;
 
 // Get UUID from username
 $uuid = MojangAPI::getUuid('MTC');

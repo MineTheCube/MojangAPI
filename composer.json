@@ -1,0 +1,22 @@
+{
+    "name": "mtc/mojang-api",
+    "description": "A easy-to-use PHP class for accessing official Mojang's API",
+    "type": "library",
+    "authors": [
+        {
+            "name": "MineTheCube",
+            "email": "minethecube@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "MojangApi\\": "src/MojangApi/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.3.x-dev"
+        }
+  }
+}
