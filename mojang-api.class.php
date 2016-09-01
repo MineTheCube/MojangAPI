@@ -633,8 +633,6 @@ class MojangAPI {
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); 
             curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
