@@ -246,7 +246,7 @@ class MojangAPI {
     public static function getPlayerHead($uuid, $size = 100) {
         $skin = self::getSkin($uuid);
         if (is_string($skin)) {
-            return self::getPlayerHeadFromSkin(self::getSkin($uuid), $size);
+            return self::getPlayerHeadFromSkin($skin, $size);
         }
         return $skin;
     }
