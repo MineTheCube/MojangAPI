@@ -5,6 +5,8 @@
  * 
  * This interface is NOT needed in your project
  * 
+ * @author MineTheCube
+ * @link https://github.com/MineTheCube/MojangAPI
  * @see http://wiki.vg/Mojang_API
  */
 interface MojangAPI {

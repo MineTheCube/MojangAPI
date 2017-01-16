@@ -7,6 +7,8 @@
  * Usually, if NULL is returned, it means empty, and FALSE means failure
  * Also, UUIDs returned are minified (without dashes)
  * 
+ * @author MineTheCube
+ * @link https://github.com/MineTheCube/MojangAPI
  * @see http://wiki.vg/Mojang_API
  */
 class MojangAPI {
