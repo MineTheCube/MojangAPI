@@ -2,20 +2,20 @@
 
 /**
  * Fast and easy way to access Mojang API
- * 
+ *
  * This interface is NOT needed in your project
- * 
+ *
  * @author MineTheCube
  * @link https://github.com/MineTheCube/MojangAPI
  * @see http://wiki.vg/Mojang_API
  */
-interface MojangAPI {
-
+interface MojangAPI
+{
     /**
      * Get Mojang status
      *
      * @return array|bool  Array with status, FALSE on failure
-     */ 
+     */
     public static function getStatus();
 
     /**
@@ -24,7 +24,7 @@ interface MojangAPI {
      * @param  string       $username
      * @param  int          $time optional
      * @return string|bool  UUID (without dashes) on success, FALSE on failure
-     */ 
+     */
     public static function getUuid($username, $time = 0);
 
     /**
@@ -34,22 +34,22 @@ interface MojangAPI {
      * @return string|bool  Username on success, FALSE on failure
      */
     public static function getUsername($uuid);
-    
+
     /**
      * Get profile (username and UUID) from username, an optional time can be provided
      *
      * @param  string      $username
      * @param  int         $time optional
      * @return array|bool  Array with id and name, FALSE on failure
-     */ 
+     */
     public static function getProfile($username, $time = 0);
-    
+
     /**
      * Get name history from UUID
      *
      * @param  string      $uuid
      * @return array|bool  Array with his username's history, FALSE on failure
-     */ 
+     */
     public static function getNameHistory($uuid);
 
     /**
@@ -73,7 +73,7 @@ interface MojangAPI {
      *
      * @param  string       $uuid
      * @return string|bool  UUID without dashes (32 chars), FALSE on failure
-     */ 
+     */
     public static function minifyUuid($uuid);
 
     /**
@@ -204,7 +204,7 @@ interface MojangAPI {
 
     /**
      * Authenticate with a Minecraft account
-     * 
+     *
      * After a few fails, Mojang server will deny all requests !
      *
      * @param  string      $id Minecraft username or Mojang email
@@ -222,7 +222,7 @@ interface MojangAPI {
      * @param  int         $port    Server's port, default is 25565
      * @param  int         $timeout Timeout (in seconds), default is 2
      * @return array|bool  Array with query result, FALSE if query failed
-     */    
+     */
     public static function query($address, $port = 25565, $timeout = 2);
 
     /**
@@ -234,7 +234,6 @@ interface MojangAPI {
      * @param  int         $port    Server's port, default is 25565
      * @param  int         $timeout Timeout (in seconds), default is 2
      * @return array|bool  Array with query result, FALSE if query failed
-     */    
+     */
     public static function ping($address, $port = 25565, $timeout = 2);
-
 }
