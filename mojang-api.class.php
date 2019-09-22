@@ -25,7 +25,8 @@ class MojangAPI
             $status = array();
             foreach ($json as $array) {
                 if (!empty($array)) {
-                    list($key, $value) = each($array);
+                    $key = key($array);
+                    $value = current($array);
                     $status[$key] = $value;
                 }
             }
