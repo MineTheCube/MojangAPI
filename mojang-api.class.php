@@ -175,7 +175,7 @@ class MojangAPI
         if (is_string($uuid)) {
             $sub = array();
             for ($i = 0; $i < 4; $i++) {
-                $sub[$i] = intval('0x' . substr($uuid, $i * 8, 8) + 0, 16);
+                $sub[$i] = intval($uuid[($i + 1) * 8 - 1], 16);
             }
             return (bool) ((($sub[0] ^ $sub[1]) ^ ($sub[2] ^ $sub[3])) % 2);
         }
