@@ -6,13 +6,6 @@
 require 'mojang-api.class.php';
 
 
-/* Mojang Status
----------------------------*/
-
-$status = MojangAPI::getStatus();
-echo 'Minecraft.net: ' . $status['minecraft.net']; // Minecraft.net: green
-
-
 /* UUID / Username
 ---------------------------*/
 
@@ -27,9 +20,6 @@ echo $full_uuid; // "069a79f4-44e9-4726-a5be-fca90e38aaf5"
 
 $uuid = MojangAPI::minifyUuid('069a79f4-44e9-4726-a5be-fca90e38aaf5');
 echo $uuid; // "069a79f444e94726a5befca90e38aaf5"
-
-$history = MojangAPI::getNameHistory('069a79f444e94726a5befca90e38aaf5');
-var_dump($history); // Array with his username's history
 
 $valid = MojangAPI::isValidUsername('=?2.;');
 var_dump($valid); // false

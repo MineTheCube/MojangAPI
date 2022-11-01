@@ -14,6 +14,8 @@ interface MojangAPI
     /**
      * Get Mojang status
      *
+     * @deprecated Mojang removed the API endpoint
+     *
      * @return array|bool  Array with status, FALSE on failure
      */
     public static function getStatus();
@@ -46,6 +48,8 @@ interface MojangAPI
 
     /**
      * Get name history from UUID
+     *
+     * @deprecated Mojang removed the API endpoint
      *
      * @param  string      $uuid
      * @return array|bool  Array with his username's history, FALSE on failure
